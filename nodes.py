@@ -56,6 +56,30 @@ def interrupt_processing(value=True):
 
 MAX_RESOLUTION=16384
 
+def apply_node_whitelist():
+    # Path to the whitelist file in the root directory
+    whitelist_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "whitelisted_nodes.txt")
+    
+    if not os.path.exists(whitelist_path):
+        return # If file doesn't exist, allow everything
+
+    try:
+        with open(whitelist_path, "r", encoding="utf-8") as f:
+            # Create a set of allowed node IDs, ignoring comments (#) and empty lines
+            whitelist = set(line.strip() for line in f if line.strip() and not line.startswith("#"))
+        
+        # Filter the global dictionaries
+        for node_name in list(NODE_CLASS_MAPPINGS.keys()):
+            if node_name not in whitelist:
+                NODE_CLASS_MAPPINGS.pop(node_name, None)
+                if node_name in NODE_DISPLAY_NAME_MAPPINGS:
+                    NODE_DISPLAY_NAME_MAPPINGS.pop(node_name, None)
+        
+        logging.info(f"Node whitelist applied: {len(NODE_CLASS_MAPPINGS)} nodes remain.")
+    except Exception as e:
+        logging.error(f"Error applying node whitelist: {e}")
+
+
 class CLIPTextEncode(ComfyNodeABC):
     @classmethod
     def INPUT_TYPES(s) -> InputTypeDict:
@@ -2174,6 +2198,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "VAEEncodeTiled": "VAE Encode (Tiled)",
 }
 
+apply_node_whitelist()
+
 EXTENSION_WEB_DIRS = {}
 
 # Dictionary of successfully loaded module names and associated directories.
@@ -2486,6 +2512,8 @@ async def init_extra_nodes(init_custom_nodes=True, init_api_nodes=True):
     import_failed_api = []
     if init_api_nodes:
         import_failed_api = await init_builtin_api_nodes()
+    
+    apply_node_whitelist()
 
     if init_custom_nodes:
         await init_external_custom_nodes()
