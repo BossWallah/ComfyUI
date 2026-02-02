@@ -11,3 +11,4 @@ SaveVideo
 LoadAudio
 PreviewAudio
 SaveAudioMP3
+TrimAudioDuration
