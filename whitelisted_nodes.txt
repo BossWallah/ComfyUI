@@ -1,5 +1,5 @@
 PreviewAny
-SwitchNode
+ComfySwitchNode
 
 LoadImage
 PreviewImage
@@ -12,3 +12,19 @@ LoadAudio
 PreviewAudio
 SaveAudioMP3
 TrimAudioDuration
+
+StringConcatenate
+StringSubstring
+StringLength
+CaseConverter
+StringTrim
+StringReplace
+StringContains
+StringCompare
+RegexMatch
+RegexExtract
+RegexReplace
+
+PrimitiveInt
+PrimitiveFloat
+PrimitiveBoolean
