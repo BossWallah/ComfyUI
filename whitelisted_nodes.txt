@@ -4,6 +4,7 @@ ComfySwitchNode
 LoadImage
 PreviewImage
 ImageCompare
+ImageCrop
 
 LoadVideo
 SaveVideo
