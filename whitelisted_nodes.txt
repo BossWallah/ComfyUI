@@ -5,6 +5,7 @@ LoadImage
 SaveImage
 #ImageCompare
 ImageCrop
+MaskPreview
 
 LoadVideo
 SaveVideo
