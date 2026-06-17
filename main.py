@@ -401,7 +401,13 @@ def start_comfyui(asyncio_loop=None):
     prompt_server.add_routes()
     hijack_progress(prompt_server)
 
-    threading.Thread(target=prompt_worker, daemon=True, args=(prompt_server.prompt_queue, prompt_server,)).start()
+    #threading.Thread(target=prompt_worker, daemon=True, args=(prompt_server.prompt_queue, prompt_server,)).start()
+
+    _N_WORKERS = int(os.environ.get("COMFY_WORKERS", "8"))
+    for _ in range(_N_WORKERS):
+        threading.Thread(target=prompt_worker, daemon=True, args=(prompt_server.prompt_queue, prompt_server,)).start()
+    logging.info(f"Started {_N_WORKERS} prompt worker thread(s) (COMFY_WORKERS env var)")
+
 
     if args.quick_test_for_ci:
         exit(0)

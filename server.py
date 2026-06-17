@@ -873,16 +873,10 @@ class PromptServer():
         async def post_prompt(request):
             logging.info("got prompt")
 
-            # --- DO NOT queue requests, duplicate calls can drain credits ---
-            if self.prompt_queue.get_tasks_remaining() > 0:
-                error = {
-                    "type": "queue_full",
-                    "message": "A job is already running",
-                    "details": "Only one job is allowed at a time.",
-                    "extra_info": {}
-                }
-                return web.json_response({"error": error, "node_errors": {}}, status=429) 
-            
+            # Anti-duplicate guard removed: the frontend disables Queue while
+            # a /prompt is in flight, COMFY_WORKERS workers run prompts in
+            # parallel, and node_run_costs captures any accidental duplicate.
+
             json_data =  await request.json()
             json_data = self.trigger_on_prompt(json_data)
 
